@@ -1,0 +1,44 @@
+name: Bootstrap TWO4APP website
+on:
+  push:
+    paths:
+      - '.github/workflows/bootstrap-site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  restore-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Verify and unpack audited website
+        shell: bash
+        run: |
+          set -euo pipefail
+          base64 -d .site-bootstrap/site.tar.xz.base64 > /tmp/two4app-site.tar.xz
+          echo '0bcedf956adb38867345a2591d5848a7794fdaa779c5fee13e1e308a9c0f5d68  /tmp/two4app-site.tar.xz' | sha256sum -c -
+          tar -tf /tmp/two4app-site.tar.xz | while IFS= read -r p; do
+            case "$p" in
+              /*|../*|*/../*|*/..) echo "Unsafe archive path $p" >&2; exit 1;;
+            esac
+          done
+          tar -xJf /tmp/two4app-site.tar.xz -C .
+          python3 tools/check_site.py
+      - name: Commit site files to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Site contents already up to date"
+            exit 0
+          fi
+          git commit -m "Publish TWO4APP bilingual website draft and site QA"
+          git push origin HEAD:main
