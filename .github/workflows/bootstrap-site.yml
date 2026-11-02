@@ -29,6 +29,8 @@ jobs:
           done
           tar -xJf /tmp/two4app-site.tar.xz -C .
           python3 tools/check_site.py
+          # This GitHub token cannot create another workflow. Keep the site, omit the bundled optional QA workflow.
+          rm -f .github/workflows/verify-site.yml
       - name: Commit site files to main
         shell: bash
         run: |
