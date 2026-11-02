@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+# DRAFT SITE. Before public launch: add legal contact details, validate policies, switch to Allow.
