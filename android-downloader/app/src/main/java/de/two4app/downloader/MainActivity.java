@@ -104,6 +104,11 @@ public final class MainActivity extends Activity {
         addressInput.setImeOptions(EditorInfo.IME_ACTION_GO);
         addressInput.setPadding(dp(16), dp(12), dp(16), dp(12));
         addressInput.setBackground(rounded(0xFF101E31, 12));
+        addressInput.setOnFocusChangeListener((v, focused) -> {
+            GradientDrawable bg = rounded(0xFF101E31, 12);
+            if (focused) bg.setStroke(dp(3), ACCENT);
+            addressInput.setBackground(bg);
+        });
         addressInput.setText(getPreferences().getString("lastInput", ""));
         searchCard.addView(addressInput, block(12, 8));
         addressInput.setOnEditorActionListener((v, actionId, event) -> {
@@ -462,6 +467,13 @@ public final class MainActivity extends Activity {
         b.setBackground(rounded(primary ? ACCENT : 0xFF405B74, 12));
         b.setOnClickListener(v -> action.run());
         b.setFocusable(true);
+        b.setOnFocusChangeListener((v, focused) -> {
+            GradientDrawable bg = rounded(primary ? ACCENT : 0xFF405B74, 12);
+            if (focused) bg.setStroke(dp(3), WHITE);
+            b.setBackground(bg);
+            b.setScaleX(focused ? 1.025f : 1f);
+            b.setScaleY(focused ? 1.025f : 1f);
+        });
         return b;
     }
 
