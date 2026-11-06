@@ -48,9 +48,3 @@ jobs:
           name: TWO4APP-Downloader-1.0
           path: android-downloader/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-      - name: Export Android APK signing tool for release preparation
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android-apksigner-tool
-          path: /usr/local/lib/android/sdk/build-tools/35.0.0/lib/apksigner.jar
-          if-no-files-found: error
