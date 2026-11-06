@@ -32,7 +32,9 @@ jobs:
       - name: Install Android platform
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
-          sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)
+          echo "Using $SDKMANAGER"
+          "$SDKMANAGER" --install "platforms;android-35" "build-tools;35.0.0"
       - name: Build signed testing APK
         working-directory: android-downloader
         run: gradle :app:assembleDebug --no-daemon --stacktrace
