@@ -48,14 +48,9 @@ jobs:
           name: TWO4APP-Downloader-1.0
           path: android-downloader/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-      - name: Publish direct download to GitHub Pages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          cp android-downloader/app/build/outputs/apk/debug/app-debug.apk downloader.apk
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add downloader.apk
-          if ! git diff --cached --quiet; then
-            git commit -m "Publish TWO4APP Downloader 1.0 testing APK"
-            git push origin HEAD:main
-          fi
+      - name: Export Android APK signing tool for release preparation
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-apksigner-tool
+          path: /usr/local/lib/android/sdk/build-tools/35.0.0/lib/apksigner.jar
+          if-no-files-found: error
