@@ -1,24 +1,7 @@
-# TWO4APP Downloader 1.0
+# TWO4APP Downloader 1.1 TV
 
-Ad-free, remote-friendly personal Android TV/Google TV downloader. No original AFTVnews Downloader installation is required; entered public short codes are resolved through `https://go.aftvnews.com/<code>`. AFTVnews runs the public code service, not TWO4APP.
+Landscape-only Android TV / Google TV APK. Separate compact left panel for code input, D-pad-friendly numeric keypad, device-local named favorites with descriptions and file manager. The right panel is a persistent in-app WebView for landing pages. Known tracker/advertising hosts and obvious ad containers are blocked; not every third-party ad can be prevented. Direct HTTPS APK downloads use Android DownloadManager and require user confirmation to install.
 
-## Features
-- Numeric AFTVnews codes and HTTPS URLs
-- Extracts direct APK URLs from the shortener's HTML when possible
-- Downloads using Android DownloadManager
-- Installs APK through Android's standard installer after explicit confirmation
-- Favorites with friendly names (device-local)
-- Minimal browser for web landing pages with a conservative ad/tracker domain filter
-- No analytics, account, tracking SDK, or ads in the app
+Use existing public AFTVnews short codes. No proprietary code registry, ads, analytics SDKs, accounts, or server. Favorites are saved locally via SharedPreferences, so they are not shared with the HTML web version or other devices.
 
-## Build
-- Android Gradle Plugin 8.9.2, Gradle 8.11.1, JDK 17, Android SDK 35
-- Run `gradle :app:assembleDebug` from `android-downloader`
-- First build can be signed with a debug key; **do not use debug-key builds for long-term upgrade distribution**. A permanent release keystore must be configured securely before publishing a stable release. Never commit a release private key to a public repository.
-
-## Security and limitations
-- Downloaded APKs can be malicious. Always verify the developer and destination host before install.
-- Third-party pages and some dynamically generated downloads may need the built-in browser, and ad blocking is best-effort.
-- Only HTTPS redirects are followed for direct resolution. Some sites use unsupported non-HTTPS links, `blob:` downloads, scripts or login walls.
-- Requires approval to install unknown apps, as mandated by Android.
-- Builds without a permanent signing key are for testing and cannot guarantee seamless in-place updates.
+**Signing:** The CI workflow currently creates a debug-signed testing APK. It does not use the permanent signing key, and a debug APK cannot update a permanently signed release in place. Do not publish debug binaries as production upgrades.
