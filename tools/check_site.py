@@ -21,7 +21,7 @@ errors=[];pages=list(ROOT.rglob('*.html'))
 for file in pages:
     raw=file.read_text('utf-8');p=LinkParser();p.feed(raw)
     if p.h1!=1:errors.append(f'{file.relative_to(ROOT)}: {p.h1} h1 headings')
-    if p.lang not in ('de','en'):errors.append(f'{file.relative_to(ROOT)}: lang={p.lang}')
+    if p.lang not in ('de','en','ru'):errors.append(f'{file.relative_to(ROOT)}: lang={p.lang}')
     if not p.title:errors.append(f'{file.relative_to(ROOT)}: no title')
     for href in p.links:
         x=urlsplit(href)
