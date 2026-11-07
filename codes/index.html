@@ -50,33 +50,39 @@ h1 { font-size:clamp(34px,5.5vw,60px); line-height:1.05; letter-spacing:-.043em;
 .link-preview { font-size:14px; text-align:center; margin:14px 0 0; color:var(--muted); overflow-wrap:anywhere; font-variant-numeric:tabular-nums; }
 .link-preview span { color:#9bdefb; }
 .note { margin-top:18px; padding:13px 15px; border:1px solid #284963; background:#112c43; border-radius:14px; font-size:13px; color:#b9d3e2; line-height:1.6; }
+
 .right { display:grid; gap:22px; }
-.fav-form { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:10px; margin-top:12px; }
+.fav-form { display:grid; grid-template-columns:minmax(0,1fr); gap:9px; margin-top:13px; }
+.field-label { color:#c6dce9; font-weight:720; font-size:14px; }
+.selected-code { color:var(--muted); font-size:14px; padding:3px 0 5px; }
+.selected-code strong { color:var(--accent2); font-variant-numeric:tabular-nums; }
 .name-input { min-width:0; width:100%; background:#071d30; color:var(--txt); border:1px solid #426178; border-radius:12px; padding:13px; font-size:16px; }
 .name-input::placeholder { color:#7894a7; }
-.secondary { border:1px solid #4e7a96; border-radius:12px; padding:11px 17px; color:#c6edff; background:#1b3d57; font-size:15px; font-weight:750; }
+.description-input { resize:vertical; min-height:90px; line-height:1.45; }
+.fav-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:4px; }
+.secondary { border:1px solid #4e7a96; border-radius:12px; padding:11px 17px; color:#c6edff; background:#1b3d57; font-size:15px; font-weight:750; min-height:48px; }
 .secondary:hover { background:#25516e; }
-.bookmarks { display:grid; gap:9px; }
+.fav-actions .secondary:first-child { flex:1; }
+.muted-button { background:#112b40; color:#bacddb; }
+[hidden] { display:none!important; }
+.bookmarks { display:grid; gap:10px; }
 .empty { text-align:center; padding:21px 12px; border:1px dashed #3a5870; border-radius:14px; color:var(--muted); font-size:14px; line-height:1.65; }
-.bookmark { display:flex; gap:10px; align-items:center; border:1px solid #38536a; background:#102b43; border-radius:15px; padding:11px 11px 11px 15px; }
-.bookmark-detail { min-width:0; flex:1; }
-.bookmark-detail strong { display:block; font-size:16px; font-weight:740; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.bookmark-detail small { display:block; margin-top:4px; color:#a7cce0; letter-spacing:.02em; font-size:13px; }
-.bookmark-open,.bookmark-del { flex:0 0 auto; min-height:44px; border-radius:10px; border:1px solid #52758d; font-size:14px; font-weight:730; }
-.bookmark-open { background:#244b65; color:#e9f7ff; padding:8px 13px; text-decoration:none; display:grid; place-items:center; }
+.bookmark { display:flex; flex-direction:column; gap:12px; border:1px solid #38536a; background:#102b43; border-radius:15px; padding:15px; }
+.bookmark-detail { min-width:0; width:100%; }
+.bookmark-detail strong { display:block; font-size:17px; font-weight:740; overflow-wrap:anywhere; }
+.bookmark-desc { font-size:14px; line-height:1.5; color:#d0e2ed; white-space:pre-wrap; overflow-wrap:anywhere; margin:7px 0 0; }
+.bookmark-detail small { display:block; margin-top:7px; color:#a7cce0; letter-spacing:.02em; font-size:13px; }
+.bookmark-actions { display:flex; gap:8px; flex-wrap:wrap; }
+.bookmark-open,.bookmark-edit,.bookmark-del { min-height:44px; border-radius:10px; border:1px solid #52758d; font-size:14px; font-weight:730; }
+.bookmark-open { background:#244b65; color:#e9f7ff; padding:8px 15px; text-decoration:none; display:grid; place-items:center; flex:1; }
+.bookmark-edit { background:#193b55; color:#d2effe; padding:8px 12px; }
 .bookmark-del { background:#132e46; color:#f0b6af; padding:8px 12px; }
-.small-heading { font-size:17px; font-weight:760; margin:0 0 10px; }
-.steps { display:grid; gap:13px; padding:0; margin:0; list-style:none; color:#c5d9e5; font-size:15px; line-height:1.5; }
-.steps li { display:flex; gap:12px; }
-.stepn { flex:0 0 auto; width:26px; height:26px; border-radius:9px; display:grid; place-items:center; color:var(--accent); background:#153b53; border:1px solid #3a6178; font-size:12px; font-weight:850; }
-.links { display:flex; flex-wrap:wrap; gap:12px; margin-top:18px; }
-.textlink { font-size:14px; color:var(--accent2); text-underline-offset:4px; }
 .footer { border-top:1px solid #2a475d; margin-top:30px; padding-top:18px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:14px; color:#98b3c5; font-size:13px; line-height:1.6; }
 .status { min-height:1.4em; margin:8px 0 0; color:#c6edff; font-size:13px; }
 .visually-hidden { position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0; clip:rect(0 0 0 0); overflow:hidden; white-space:nowrap; }
-@media(max-width:840px) { .cols { grid-template-columns:1fr; } .right { grid-template-columns:1fr 1fr; gap:14px; } }
-@media(max-width:600px) { .wrap { padding:21px 15px 28px; } .header { margin-bottom:31px; } .toplink { display:none; } .lang { padding:9px 11px; } .top-actions { gap:6px; } .emblem { width:42px; height:42px; } .brand { font-size:19px; gap:9px; } .intro { margin-bottom:19px; } .right { grid-template-columns:1fr; } .key { min-height:57px; } .bookmark-detail strong { font-size:15px; } }
-@media(min-width:1300px) and (min-height:680px) { .wrap { max-width:1430px; padding-top:42px; } .code-input { min-height:88px; } .key { min-height:73px; } .primary { min-height:77px; } .caption,.note,.textlink { font-size:16px; } .bookmark-open,.bookmark-del { min-height:52px; } }
+@media(max-width:840px) { .cols { grid-template-columns:1fr; }  }
+@media(max-width:600px) { .wrap { padding:21px 15px 28px; } .header { margin-bottom:31px; } .toplink { display:none; } .lang { padding:9px 11px; } .top-actions { gap:6px; } .emblem { width:42px; height:42px; } .brand { font-size:19px; gap:9px; } .intro { margin-bottom:19px; }  .key { min-height:57px; } .bookmark-detail strong { font-size:15px; } }
+@media(min-width:1300px) and (min-height:680px) { .wrap { max-width:1430px; padding-top:42px; } .code-input { min-height:88px; } .key { min-height:73px; } .primary { min-height:77px; } .caption,.bookmark-desc { font-size:16px; } .bookmark-open,.bookmark-edit,.bookmark-del { min-height:52px; } }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
 </style>
 </head>
@@ -89,7 +95,7 @@ h1 { font-size:clamp(34px,5.5vw,60px); line-height:1.05; letter-spacing:-.043em;
  <section class="intro" aria-labelledby="pageTitle">
   <p class="eyebrow">TWO4APP · CODES</p>
   <h1 id="pageTitle" data-i18n="title">Загрузка по коду</h1>
-  <p data-i18n="subtitle">Вводи существующие коды Downloader (AFTVnews) и открывай загрузки прямо в браузере телефона или Google TV. Без рекламы и отслеживания на нашей странице.</p>
+  <p data-i18n="subtitle">Существующие коды AFTVnews · Телефон и Google TV · Без рекламы на этой странице.</p>
  </section>
  <main class="cols">
   <section class="card pad" aria-labelledby="inputTitle">
@@ -105,116 +111,139 @@ h1 { font-size:clamp(34px,5.5vw,60px); line-height:1.05; letter-spacing:-.043em;
    <a href="#" id="open" class="primary" aria-disabled="true" tabindex="-1"><span data-i18n="openDownload">Открыть загрузку</span><span class="arrow" aria-hidden="true">↗</span></a>
    <p class="link-preview" id="preview">aftv.news/<span>…</span></p>
    <p class="status" id="status" role="status" aria-live="polite"></p>
-   <div class="note" data-i18n="notice">Если код указывает прямо на APK, браузер может сразу предложить скачать файл. Если код ведёт на сайт, откроется этот сайт. Установка APK требует отдельного подтверждения Android.</div>
   </section>
   <div class="right">
    <section class="card pad" aria-labelledby="savedTitle">
     <h2 class="card-heading" id="savedTitle"><span class="badge" aria-hidden="true">☆</span><span data-i18n="saved">Мои коды</span></h2>
-    <p class="caption" data-i18n="savedDesc">Добавь нужные приложения — больше не придётся набирать их коды каждый раз.</p>
-    <label for="name" class="visually-hidden" data-i18n="nameLabel">Название приложения</label>
-    <div class="fav-form"><input class="name-input" id="name" type="text" maxlength="60" autocomplete="off" data-placeholder="namePlaceholder" placeholder="Название приложения (необязательно)"><button class="secondary" id="save" type="button" data-i18n="save">Сохранить</button></div>
+    <p class="caption" data-i18n="savedDesc">Сохранённые коды с названиями и описаниями программ.</p>
+    <div class="fav-form">
+     <p class="selected-code"><span data-i18n="codeForSave">Код:</span> <strong id="selectedSaveCode">—</strong></p>
+     <label class="field-label" for="name" data-i18n="nameLabel">Название программы</label>
+     <input class="name-input" id="name" type="text" maxlength="80" autocomplete="off" data-placeholder="namePlaceholder" placeholder="Например, TiviMate">
+     <label class="field-label" for="description" data-i18n="descriptionLabel">Описание</label>
+     <textarea class="name-input description-input" id="description" maxlength="300" rows="3" data-placeholder="descriptionPlaceholder" placeholder="Для чего эта программа"></textarea>
+     <div class="fav-actions">
+      <button class="secondary" id="save" type="button" data-i18n="save">Сохранить</button>
+      <button class="secondary muted-button" id="cancelEdit" type="button" data-i18n="cancel" hidden>Отмена</button>
+     </div>
+    </div>
     <p class="status" id="saveStatus" role="status" aria-live="polite"></p>
     <div class="bookmarks" id="bookmarks"></div>
-   </section>
-   <section class="card pad" aria-labelledby="helpTitle">
-    <h2 class="small-heading" id="helpTitle" data-i18n="howTitle">Как пользоваться</h2>
-    <ol class="steps">
-     <li><span class="stepn">1</span><span data-i18n="step1">Введи готовый код AFTVnews кнопками или клавиатурой.</span></li>
-     <li><span class="stepn">2</span><span data-i18n="step2">Нажми «Открыть загрузку». Страница перейдёт на официальный короткий адрес.</span></li>
-     <li><span class="stepn">3</span><span data-i18n="step3">Скачай файл и, если это APK, установи его через Android.</span></li>
-    </ol>
-    <div class="links"><a href="https://two4app.de/downloader.apk" class="textlink" data-i18n="nativeApp">APK нашего Downloader</a><a href="https://go.aftvnews.com/p/faq/" target="_blank" rel="noopener noreferrer" class="textlink" data-i18n="codeInfo">О кодах AFTVnews</a></div>
    </section>
   </div>
  </main>
  <footer class="footer"><span data-i18n="foot1">Без рекламных блоков на этой странице. Сторонние сайты могут показывать собственную рекламу.</span><span data-i18n="foot2">Коды сохраняются только в этом браузере. TWO4APP не связан с AFTVnews.</span></footer>
 </div>
 <script>
-(function () {
- 'use strict';
- var dict = {
-  ru: {home:'Сайт TWO4APP',title:'Загрузка по коду',subtitle:'Вводи существующие коды Downloader (AFTVnews) и открывай загрузки прямо в браузере телефона или Google TV. Без рекламы и отслеживания на нашей странице.',enterCode:'Введите цифровой код',codeLabel:'Цифровой код AFTVnews',clear:'Сброс',openDownload:'Открыть загрузку',notice:'Если код указывает прямо на APK, браузер может сразу предложить скачать файл. Если код ведёт на сайт, откроется этот сайт. Установка APK требует отдельного подтверждения Android.',saved:'Мои коды',savedDesc:'Добавь нужные приложения — больше не придётся набирать их коды каждый раз.',nameLabel:'Название приложения',namePlaceholder:'Название (необязательно)',save:'Сохранить',empty:'Пока нет сохранённых кодов.',go:'Открыть',delete:'Удалить',howTitle:'Как пользоваться',step1:'Введи готовый код AFTVnews кнопками или клавиатурой.',step2:'Нажми «Открыть загрузку». Страница перейдёт на официальный короткий адрес.',step3:'Скачай файл и, если это APK, установи его через Android.',nativeApp:'APK нашего Downloader',codeInfo:'О кодах AFTVnews',foot1:'Без рекламных блоков на этой странице. Сторонние сайты могут показывать собственную рекламу.',foot2:'Коды сохраняются только в этом браузере. TWO4APP не связан с AFTVnews.',enterFirst:'Сначала введите код.',savedOk:'Код сохранён.',savedUpdate:'Название обновлено.',removed:'Код удалён.',notSaved:'Этот браузер не разрешает локальное сохранение.',exampleName:'Код ',limit:'Не более 60 сохранённых кодов.'},
-  de: {home:'TWO4APP Website',title:'Download per Code',subtitle:'Vorhandene Downloader-Codes (AFTVnews) im Browser auf dem Handy oder Google TV öffnen. Keine Werbung oder Tracker auf dieser Seite.',enterCode:'Zahlencode eingeben',codeLabel:'AFTVnews-Zahlencode',clear:'Löschen',openDownload:'Download öffnen',notice:'Wenn der Code direkt auf eine APK zeigt, kann der Browser die Datei herunterladen. Sonst öffnet sich die verlinkte Website. Die Installation muss unter Android bestätigt werden.',saved:'Meine Codes',savedDesc:'Häufig genutzte Apps speichern, statt die Codes jedes Mal neu einzugeben.',nameLabel:'App-Name',namePlaceholder:'Name (optional)',save:'Speichern',empty:'Noch keine gespeicherten Codes.',go:'Öffnen',delete:'Entfernen',howTitle:'So funktioniert es',step1:'Vorhandenen AFTVnews-Code per Fernbedienung oder Tastatur eingeben.',step2:'„Download öffnen“ wählen. Der Browser öffnet die offizielle Kurzadresse.',step3:'Datei herunterladen und die APK gegebenenfalls über Android installieren.',nativeApp:'Unsere Downloader-APK',codeInfo:'Info zu AFTVnews-Codes',foot1:'Keine Werbeblöcke auf dieser Seite. Externe Websites können eigene Werbung anzeigen.',foot2:'Codes werden nur in diesem Browser gespeichert. TWO4APP ist nicht mit AFTVnews verbunden.',enterFirst:'Bitte zuerst einen Code eingeben.',savedOk:'Code gespeichert.',savedUpdate:'Name aktualisiert.',removed:'Code entfernt.',notSaved:'Dieser Browser lässt kein lokales Speichern zu.',exampleName:'Code ',limit:'Maximal 60 gespeicherte Codes.'}
- };
- var byId=function (id){return document.getElementById(id)};
- var input=byId('code'), name=byId('name'), open=byId('open'), preview=byId('preview'), bookmarks=byId('bookmarks');
- var savedKey='two4app-codes-favorites-v1', langKey='two4app-codes-language-v1';
- function getStored(key) { try {return localStorage.getItem(key)} catch(e) {return null} }
- function setStored(key,val) { try {localStorage.setItem(key,val);return true} catch(e){return false} }
- var language=getStored(langKey)==='de'?'de':'ru', favorites=[];
- try { var candidate=JSON.parse(getStored(savedKey)||'[]'); if (Array.isArray(candidate)) favorites=candidate.filter(function(x){return x&&typeof x.code==='string'&&/^\d{1,15}$/.test(x.code)&&typeof x.name==='string'}).slice(0,60) }catch(e){}
- function t(key) {return dict[language][key]||key}
- function normalized(text) { var match=String(text||'').match(/(?:aftv\.news|go\.aftvnews\.com)\/(\d{1,15})/i);return (match?match[1]:String(text||'').replace(/\D/g,'')).slice(0,15) }
- function current(){return normalized(input.value)}
- function link(code) {return 'https://aftv.news/'+encodeURIComponent(code)}
- function setCode(value) {input.value=normalized(value);update()}
- function update() {
-  var code=current(); if(input.value!==code)input.value=code;
-  open.href=code?link(code):'#';open.setAttribute('aria-disabled',code?'false':'true');open.tabIndex=code?0:-1;
-  preview.textContent='aftv.news/'+(code||'…');
-  byId('save').disabled=!code;
+
+(function(){
+'use strict';
+var dict={
+ ru:{home:'Сайт TWO4APP',title:'Загрузка по коду',subtitle:'Существующие коды AFTVnews · Телефон и Google TV · Без рекламы на этой странице.',enterCode:'Введите цифровой код',codeLabel:'Цифровой код AFTVnews',clear:'Сброс',openDownload:'Открыть загрузку',saved:'Мои коды',savedDesc:'Сохранённые коды с названиями и описаниями программ.',codeForSave:'Код:',nameLabel:'Название программы',namePlaceholder:'Например, TiviMate',descriptionLabel:'Описание',descriptionPlaceholder:'Для чего эта программа',save:'Сохранить',update:'Обновить',cancel:'Отмена',edit:'Изменить',empty:'Пока нет сохранённых кодов.',go:'Открыть',delete:'Удалить',foot1:'Без рекламных блоков на этой странице. Сторонние сайты могут показывать собственную рекламу.',foot2:'Коды сохраняются только в этом браузере. TWO4APP не связан с AFTVnews.',enterFirst:'Сначала введите код.',savedOk:'Код сохранён.',savedUpdate:'Данные обновлены.',removed:'Код удалён.',notSaved:'Этот браузер не разрешает локальное сохранение.',exampleName:'Код ',limit:'Не более 60 сохранённых кодов.',editMode:'Редактирование сохранённого кода.',duplicate:'Такой код уже есть в избранном.'},
+ de:{home:'TWO4APP Website',title:'Download per Code',subtitle:'Vorhandene AFTVnews-Codes · Smartphone und Google TV · Ohne Werbung auf dieser Seite.',enterCode:'Zahlencode eingeben',codeLabel:'AFTVnews-Zahlencode',clear:'Löschen',openDownload:'Download öffnen',saved:'Meine Codes',savedDesc:'Gespeicherte Codes mit App-Namen und Beschreibungen.',codeForSave:'Code:',nameLabel:'App-Name',namePlaceholder:'Zum Beispiel TiviMate',descriptionLabel:'Beschreibung',descriptionPlaceholder:'Wofür ist diese App?',save:'Speichern',update:'Aktualisieren',cancel:'Abbrechen',edit:'Bearbeiten',empty:'Noch keine gespeicherten Codes.',go:'Öffnen',delete:'Entfernen',foot1:'Keine Werbeblöcke auf dieser Seite. Externe Websites können eigene Werbung anzeigen.',foot2:'Codes werden nur in diesem Browser gespeichert. TWO4APP ist nicht mit AFTVnews verbunden.',enterFirst:'Bitte zuerst einen Code eingeben.',savedOk:'Code gespeichert.',savedUpdate:'Eintrag aktualisiert.',removed:'Code entfernt.',notSaved:'Dieser Browser lässt kein lokales Speichern zu.',exampleName:'Code ',limit:'Maximal 60 gespeicherte Codes.',editMode:'Gespeicherten Code bearbeiten.',duplicate:'Dieser Code ist bereits gespeichert.'}
+};
+var byId=function(id){return document.getElementById(id)};
+var input=byId('code'),name=byId('name'),description=byId('description'),open=byId('open'),preview=byId('preview'),bookmarks=byId('bookmarks');
+var savedKey='two4app-codes-favorites-v1',langKey='two4app-codes-language-v1',editingCode=null;
+function getStored(key){try{return localStorage.getItem(key)}catch(e){return null}}
+function setStored(key,value){try{localStorage.setItem(key,value);return true}catch(e){return false}}
+var language=getStored(langKey)==='de'?'de':'ru',favorites=[];
+try{
+ var candidate=JSON.parse(getStored(savedKey)||'[]');
+ if(Array.isArray(candidate)){
+  favorites=candidate.filter(function(x){return x&&typeof x.code==='string'&&/^\d{1,15}$/.test(x.code)&&typeof x.name==='string'})
+   .slice(0,60).map(function(x){return{code:x.code,name:x.name.slice(0,80),description:typeof x.description==='string'?x.description.slice(0,300):''}});
  }
- function status(id,message){byId(id).textContent=message}
- function applyLang(lang) {
-  language=lang;setStored(langKey,lang);document.documentElement.lang=lang;
-  document.querySelectorAll('[data-i18n]').forEach(function(el){el.textContent=t(el.dataset.i18n)});
-  document.querySelectorAll('[data-placeholder]').forEach(function(el){el.placeholder=t(el.dataset.placeholder)});
-  byId('ruBtn').setAttribute('aria-pressed',String(lang==='ru'));
-  byId('deBtn').setAttribute('aria-pressed',String(lang==='de'));
-  render();status('status','');status('saveStatus','');
- }
- function persist(){return setStored(savedKey,JSON.stringify(favorites))}
- function render() {
-  bookmarks.replaceChildren();
-  if(!favorites.length){var empty=document.createElement('p');empty.className='empty';empty.textContent=t('empty');bookmarks.appendChild(empty);return}
-  favorites.forEach(function(entry){
-   var card=document.createElement('div');card.className='bookmark';
-   var detail=document.createElement('div');detail.className='bookmark-detail';
-   var title=document.createElement('strong');title.textContent=entry.name;
-   var code=document.createElement('small');code.textContent=entry.code;
-   detail.appendChild(title);detail.appendChild(code);
-   var btn=document.createElement('a');btn.className='bookmark-open';btn.textContent=t('go');btn.href=link(entry.code);
-   var del=document.createElement('button');del.type='button';del.className='bookmark-del';del.textContent='×';del.setAttribute('aria-label',t('delete')+' '+entry.name);
-   del.addEventListener('click',function(){favorites=favorites.filter(function(x){return x.code!==entry.code});persist();render();status('saveStatus',t('removed'))});
-   card.appendChild(detail);card.appendChild(btn);card.appendChild(del);bookmarks.appendChild(card);
+}catch(e){}
+function t(k){return dict[language][k]||k}
+function normalized(text){var match=String(text||'').match(/(?:aftv\.news|go\.aftvnews\.com)\/(\d{1,15})/i);return(match?match[1]:String(text||'').replace(/\D/g,'')).slice(0,15)}
+function current(){return normalized(input.value)}
+function link(code){return 'https://aftv.news/'+encodeURIComponent(code)}
+function setCode(value){input.value=normalized(value);update()}
+function update(){
+ var code=current();if(input.value!==code)input.value=code;
+ open.href=code?link(code):'#';open.setAttribute('aria-disabled',code?'false':'true');open.tabIndex=code?0:-1;
+ preview.textContent='aftv.news/'+(code||'…');
+ byId('save').disabled=!code;byId('selectedSaveCode').textContent=code||'—';
+}
+function status(id,message){byId(id).textContent=message}
+function updateEditor(){byId('save').textContent=editingCode?t('update'):t('save');byId('cancelEdit').hidden=!editingCode}
+function cancelEditing(){editingCode=null;name.value='';description.value='';updateEditor();status('saveStatus','')}
+function applyLang(lang){
+ language=lang;setStored(langKey,lang);document.documentElement.lang=lang;
+ document.querySelectorAll('[data-i18n]').forEach(function(el){el.textContent=t(el.dataset.i18n)});
+ document.querySelectorAll('[data-placeholder]').forEach(function(el){el.placeholder=t(el.dataset.placeholder)});
+ byId('ruBtn').setAttribute('aria-pressed',String(lang==='ru'));byId('deBtn').setAttribute('aria-pressed',String(lang==='de'));
+ updateEditor();render();status('status','');status('saveStatus','');
+}
+function persist(){return setStored(savedKey,JSON.stringify(favorites))}
+function render(){
+ bookmarks.replaceChildren();
+ if(!favorites.length){var empty=document.createElement('p');empty.className='empty';empty.textContent=t('empty');bookmarks.appendChild(empty);return}
+ favorites.forEach(function(entry){
+  var card=document.createElement('div');card.className='bookmark';
+  var detail=document.createElement('div');detail.className='bookmark-detail';
+  var title=document.createElement('strong');title.textContent=entry.name;detail.appendChild(title);
+  if(entry.description){var note=document.createElement('p');note.className='bookmark-desc';note.textContent=entry.description;detail.appendChild(note)}
+  var code=document.createElement('small');code.textContent=t('codeForSave')+' '+entry.code;detail.appendChild(code);
+  var actions=document.createElement('div');actions.className='bookmark-actions';
+  var btn=document.createElement('a');btn.className='bookmark-open';btn.textContent=t('go');btn.href=link(entry.code);
+  var edit=document.createElement('button');edit.type='button';edit.className='bookmark-edit';edit.textContent=t('edit');
+  edit.addEventListener('click',function(){editingCode=entry.code;setCode(entry.code);name.value=entry.name;description.value=entry.description||'';updateEditor();status('saveStatus',t('editMode'));name.focus()});
+  var del=document.createElement('button');del.type='button';del.className='bookmark-del';del.textContent='×';del.setAttribute('aria-label',t('delete')+' '+entry.name);
+  del.addEventListener('click',function(){
+   var before=favorites.slice();favorites=favorites.filter(function(x){return x.code!==entry.code});
+   if(!persist()){favorites=before;status('saveStatus',t('notSaved'));return}
+   if(editingCode===entry.code)cancelEditing();render();status('saveStatus',t('removed'));
   });
- }
- input.addEventListener('input',function(){update();status('status','')});
- input.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();if(current())open.click();else status('status',t('enterFirst'))}});
- byId('keypad').addEventListener('click',function(ev){var b=ev.target.closest('button[data-digit]');if(b){setCode(current()+b.dataset.digit);status('status','')}});
- byId('erase').addEventListener('click',function(){setCode(current().slice(0,-1))});
- byId('clear').addEventListener('click',function(){setCode('');status('status','');input.focus()});
- open.addEventListener('click',function(ev){if(!current()){ev.preventDefault();status('status',t('enterFirst'))}});
- byId('save').addEventListener('click',function(){
-  var code=current();if(!code){status('saveStatus',t('enterFirst'));return}
-  var named=name.value.trim().slice(0,60)||t('exampleName')+code;
-  var existing=favorites.find(function(x){return x.code===code});
-  if(existing){existing.name=named}else{if(favorites.length>=60){status('saveStatus',t('limit'));return}favorites.unshift({code:code,name:named})}
-  if(!persist()){status('saveStatus',t('notSaved'));return}
-  name.value='';render();status('saveStatus',t(existing?'savedUpdate':'savedOk'));
+  actions.appendChild(btn);actions.appendChild(edit);actions.appendChild(del);
+  card.appendChild(detail);card.appendChild(actions);bookmarks.appendChild(card);
  });
- byId('ruBtn').addEventListener('click',function(){applyLang('ru')});
- byId('deBtn').addEventListener('click',function(){applyLang('de')});
- // Keyboard and TV remote navigation. Native browser behaviour is retained in text inputs.
- document.addEventListener('keydown',function(ev){
-  var el=document.activeElement;
-  if(el===input||el===name||ev.altKey||ev.ctrlKey||ev.metaKey)return;
-  if(/^\d$/.test(ev.key)){ev.preventDefault();setCode(current()+ev.key);return}
-  if(ev.key==='Backspace'){ev.preventDefault();setCode(current().slice(0,-1));return}
-  if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(ev.key))return;
-  var list=Array.from(document.querySelectorAll('a[href],button:not(:disabled),input:not(:disabled)')).filter(function(node){var r=node.getBoundingClientRect();return r.width>0&&r.height>0&&node.tabIndex!==-1});
-  if(!list.includes(el))return;
-  var origin=el.getBoundingClientRect(), ox=origin.left+origin.width/2,oy=origin.top+origin.height/2,best=null,bestScore=Infinity;
-  list.forEach(function(node){if(node===el)return;var r=node.getBoundingClientRect(),dx=r.left+r.width/2-ox,dy=r.top+r.height/2-oy;
-   var along=ev.key==='ArrowRight'?dx:ev.key==='ArrowLeft'?-dx:ev.key==='ArrowDown'?dy:-dy;
-   var aside=ev.key==='ArrowRight'||ev.key==='ArrowLeft'?Math.abs(dy):Math.abs(dx);
-   if(along<7)return;var score=along+aside*2.8; if(score<bestScore){best=node;bestScore=score}
-  });
-  if(best){ev.preventDefault();best.focus({preventScroll:false})}
+}
+input.addEventListener('input',function(){update();status('status','')});
+input.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();if(current())open.click();else status('status',t('enterFirst'))}});
+byId('keypad').addEventListener('click',function(ev){var b=ev.target.closest('button[data-digit]');if(b){setCode(current()+b.dataset.digit);status('status','')}});
+byId('erase').addEventListener('click',function(){setCode(current().slice(0,-1))});
+byId('clear').addEventListener('click',function(){setCode('');status('status','');input.focus()});
+open.addEventListener('click',function(ev){if(!current()){ev.preventDefault();status('status',t('enterFirst'))}});
+byId('save').addEventListener('click',function(){
+ var code=current();if(!code){status('saveStatus',t('enterFirst'));return}
+ var named=name.value.trim().slice(0,80)||t('exampleName')+code;
+ var desc=description.value.trim().slice(0,300);
+ var snapshot=favorites.map(function(e){return{code:e.code,name:e.name,description:e.description||''}});
+ var existing=favorites.find(function(x){return x.code===code});
+ if(editingCode){
+  var original=favorites.find(function(x){return x.code===editingCode});
+  if(!original){cancelEditing();status('saveStatus',t('removed'));return}
+  if(code!==editingCode&&existing){status('saveStatus',t('duplicate'));return}
+  original.code=code;original.name=named;original.description=desc;
+ }else if(existing){existing.name=named;existing.description=desc}
+ else{if(favorites.length>=60){status('saveStatus',t('limit'));return}favorites.unshift({code:code,name:named,description:desc})}
+ if(!persist()){favorites=snapshot;render();status('saveStatus',t('notSaved'));return}
+ var wasUpdate=Boolean(editingCode||existing);
+ cancelEditing();render();status('saveStatus',t(wasUpdate?'savedUpdate':'savedOk'));
+});
+byId('cancelEdit').addEventListener('click',cancelEditing);
+byId('ruBtn').addEventListener('click',function(){applyLang('ru')});
+byId('deBtn').addEventListener('click',function(){applyLang('de')});
+document.addEventListener('keydown',function(ev){
+ var el=document.activeElement;
+ if(el===input||el===name||el===description||ev.altKey||ev.ctrlKey||ev.metaKey)return;
+ if(/^\d$/.test(ev.key)){ev.preventDefault();setCode(current()+ev.key);return}
+ if(ev.key==='Backspace'){ev.preventDefault();setCode(current().slice(0,-1));return}
+ if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(ev.key))return;
+ var list=Array.from(document.querySelectorAll('a[href],button:not(:disabled),input:not(:disabled),textarea:not(:disabled)')).filter(function(node){var r=node.getBoundingClientRect();return r.width>0&&r.height>0&&node.tabIndex!==-1});
+ if(!list.includes(el))return;
+ var origin=el.getBoundingClientRect(),ox=origin.left+origin.width/2,oy=origin.top+origin.height/2,best=null,bestScore=Infinity;
+ list.forEach(function(node){if(node===el)return;var r=node.getBoundingClientRect(),dx=r.left+r.width/2-ox,dy=r.top+r.height/2-oy;
+  var along=ev.key==='ArrowRight'?dx:ev.key==='ArrowLeft'?-dx:ev.key==='ArrowDown'?dy:-dy;
+  var aside=ev.key==='ArrowRight'||ev.key==='ArrowLeft'?Math.abs(dy):Math.abs(dx);
+  if(along<7)return;var score=along+aside*2.8;if(score<bestScore){best=node;bestScore=score}
  });
- var q=new URLSearchParams(window.location.search).get('code');
- if(q)setCode(q); else update();
- applyLang(language);
+ if(best){ev.preventDefault();best.focus({preventScroll:false})}
+});
+var q=new URLSearchParams(window.location.search).get('code');
+if(q)setCode(q);else update();applyLang(language);
 })();
 </script>
 </body>
