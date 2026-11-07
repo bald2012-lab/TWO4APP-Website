@@ -1,0 +1,25 @@
+name: Verify release-signed TWO4APP Downloader APK
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'downloader.apk'
+      - 'downloader-tv-1.1.apk'
+      - '.github/workflows/verify-downloader-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Android signing tool
+        run: |
+          SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -n 1)
+          "$SDKMANAGER" --install "build-tools;35.0.0"
+      - name: Verify APK integrity and Android signature
+        run: |
+          cmp downloader.apk downloader-tv-1.1.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs downloader.apk
+          sha256sum downloader.apk
