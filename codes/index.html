@@ -4,9 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#071c32">
+<meta name="application-version" content="1.1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="description" content="TWO4APP Codes — простой доступ к загрузкам по существующим кодам AFTVnews для телефона и Google TV.">
-<title>TWO4APP Codes — загрузка по коду</title>
+<title>TWO4APP Codes 1.1 — загрузка по коду</title>
 <style>
 :root { color-scheme:dark; --bg:#071522; --panel:#0d2238; --panel2:#112b45; --edge:#294359; --txt:#f1f7fb; --muted:#acc2d2; --accent:#80d4ff; --accent2:#b8efff; --red:#ffc6c0; --focus:#f8dc94; --radius:24px; }
 * { box-sizing:border-box; }
@@ -28,7 +29,12 @@ button:disabled { opacity:.45; cursor:not-allowed; }
 .lang[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#05273e; }
 .toplink { color:var(--muted); font-size:14px; text-decoration:none; margin-right:8px; }
 .intro { max-width:860px; margin:0 0 27px; }
-.eyebrow { margin:0 0 11px; letter-spacing:.16em; color:var(--accent); font-size:12px; font-weight:850; }
+.eyebrow { margin:0 0 11px; letter-spacing:.16em; color:var(--accent); font-size:12px; font-weight:850; display:flex; align-items:center; flex-wrap:wrap; gap:12px; }
+.version-chip { display:inline-block; color:#061b2a; background:#afe8fc; letter-spacing:.02em; font-size:13px; padding:7px 13px; border-radius:10px; font-weight:900; }
+.edit-panel { margin:16px 0 16px; border:1px solid #52718a; padding:16px; border-radius:16px; background:#082136; }
+.edit-panel .fav-form { margin-top:10px; }
+.edit-panel .edit-title { font-size:17px; font-weight:800; margin:0; color:var(--accent2); }
+.edit-panel button:focus-visible { outline-offset:2px; }
 h1 { font-size:clamp(34px,5.5vw,60px); line-height:1.05; letter-spacing:-.043em; margin:0 0 16px; }
 .intro p:last-child { color:var(--muted); font-size:clamp(15px,1.65vw,19px); line-height:1.6; margin:0; }
 .cols { display:grid; grid-template-columns:minmax(0,1.28fr) minmax(305px,.88fr); gap:22px; align-items:start; }
@@ -93,9 +99,8 @@ h1 { font-size:clamp(34px,5.5vw,60px); line-height:1.05; letter-spacing:-.043em;
   <div class="top-actions"><a class="toplink" href="https://two4app.de/" data-i18n="home">Сайт TWO4APP</a><button type="button" class="lang" id="ruBtn" aria-pressed="true">RU</button><button type="button" class="lang" id="deBtn" aria-pressed="false">DE</button></div>
  </header>
  <section class="intro" aria-labelledby="pageTitle">
-  <p class="eyebrow">TWO4APP · CODES</p>
+  <p class="eyebrow">TWO4APP · CODES <span class="version-chip">Version 1.1</span></p>
   <h1 id="pageTitle" data-i18n="title">Загрузка по коду</h1>
-  <p data-i18n="subtitle">Существующие коды AFTVnews · Телефон и Google TV · Без рекламы на этой странице.</p>
  </section>
  <main class="cols">
   <section class="card pad" aria-labelledby="inputTitle">
@@ -115,8 +120,9 @@ h1 { font-size:clamp(34px,5.5vw,60px); line-height:1.05; letter-spacing:-.043em;
   <div class="right">
    <section class="card pad" aria-labelledby="savedTitle">
     <h2 class="card-heading" id="savedTitle"><span class="badge" aria-hidden="true">☆</span><span data-i18n="saved">Мои коды</span></h2>
-    <p class="caption" data-i18n="savedDesc">Сохранённые коды с названиями и описаниями программ.</p>
-    <div class="fav-form">
+    <div class="edit-panel" id="editPanel" hidden>
+     <p class="edit-title" data-i18n="editTitle">Редактирование кода</p>
+     <div class="fav-form">
      <p class="selected-code"><span data-i18n="codeForSave">Код:</span> <strong id="selectedSaveCode">—</strong></p>
      <label class="field-label" for="name" data-i18n="nameLabel">Название программы</label>
      <input class="name-input" id="name" type="text" maxlength="80" autocomplete="off" data-placeholder="namePlaceholder" placeholder="Например, TiviMate">
@@ -124,7 +130,8 @@ h1 { font-size:clamp(34px,5.5vw,60px); line-height:1.05; letter-spacing:-.043em;
      <textarea class="name-input description-input" id="description" maxlength="300" rows="3" data-placeholder="descriptionPlaceholder" placeholder="Для чего эта программа"></textarea>
      <div class="fav-actions">
       <button class="secondary" id="save" type="button" data-i18n="save">Сохранить</button>
-      <button class="secondary muted-button" id="cancelEdit" type="button" data-i18n="cancel" hidden>Отмена</button>
+      <button class="secondary muted-button" id="cancelEdit" type="button" data-i18n="cancel">Отмена</button>
+     </div>
      </div>
     </div>
     <p class="status" id="saveStatus" role="status" aria-live="polite"></p>
@@ -138,113 +145,193 @@ h1 { font-size:clamp(34px,5.5vw,60px); line-height:1.05; letter-spacing:-.043em;
 
 (function(){
 'use strict';
+var VERSION='1.1', STORAGE_KEY='two4app-codes-favorites-v1', LANGUAGE_KEY='two4app-codes-language-v1';
+var AUTO_DELAY=2200, MIN_AUTO_LENGTH=4, MAX_ENTRIES=60;
 var dict={
- ru:{home:'Сайт TWO4APP',title:'Загрузка по коду',subtitle:'Существующие коды AFTVnews · Телефон и Google TV · Без рекламы на этой странице.',enterCode:'Введите цифровой код',codeLabel:'Цифровой код AFTVnews',clear:'Сброс',openDownload:'Открыть загрузку',saved:'Мои коды',savedDesc:'Сохранённые коды с названиями и описаниями программ.',codeForSave:'Код:',nameLabel:'Название программы',namePlaceholder:'Например, TiviMate',descriptionLabel:'Описание',descriptionPlaceholder:'Для чего эта программа',save:'Сохранить',update:'Обновить',cancel:'Отмена',edit:'Изменить',empty:'Пока нет сохранённых кодов.',go:'Открыть',delete:'Удалить',foot1:'Без рекламных блоков на этой странице. Сторонние сайты могут показывать собственную рекламу.',foot2:'Коды сохраняются только в этом браузере. TWO4APP не связан с AFTVnews.',enterFirst:'Сначала введите код.',savedOk:'Код сохранён.',savedUpdate:'Данные обновлены.',removed:'Код удалён.',notSaved:'Этот браузер не разрешает локальное сохранение.',exampleName:'Код ',limit:'Не более 60 сохранённых кодов.',editMode:'Редактирование сохранённого кода.',duplicate:'Такой код уже есть в избранном.'},
- de:{home:'TWO4APP Website',title:'Download per Code',subtitle:'Vorhandene AFTVnews-Codes · Smartphone und Google TV · Ohne Werbung auf dieser Seite.',enterCode:'Zahlencode eingeben',codeLabel:'AFTVnews-Zahlencode',clear:'Löschen',openDownload:'Download öffnen',saved:'Meine Codes',savedDesc:'Gespeicherte Codes mit App-Namen und Beschreibungen.',codeForSave:'Code:',nameLabel:'App-Name',namePlaceholder:'Zum Beispiel TiviMate',descriptionLabel:'Beschreibung',descriptionPlaceholder:'Wofür ist diese App?',save:'Speichern',update:'Aktualisieren',cancel:'Abbrechen',edit:'Bearbeiten',empty:'Noch keine gespeicherten Codes.',go:'Öffnen',delete:'Entfernen',foot1:'Keine Werbeblöcke auf dieser Seite. Externe Websites können eigene Werbung anzeigen.',foot2:'Codes werden nur in diesem Browser gespeichert. TWO4APP ist nicht mit AFTVnews verbunden.',enterFirst:'Bitte zuerst einen Code eingeben.',savedOk:'Code gespeichert.',savedUpdate:'Eintrag aktualisiert.',removed:'Code entfernt.',notSaved:'Dieser Browser lässt kein lokales Speichern zu.',exampleName:'Code ',limit:'Maximal 60 gespeicherte Codes.',editMode:'Gespeicherten Code bearbeiten.',duplicate:'Dieser Code ist bereits gespeichert.'}
+ ru:{
+  home:'Сайт TWO4APP',title:'Загрузка по коду',enterCode:'Введите цифровой код',codeLabel:'Цифровой код AFTVnews',
+  clear:'Сброс',openDownload:'Открыть загрузку',saved:'Мои коды',codeForSave:'Код:',editTitle:'Редактирование кода',
+  nameLabel:'Название программы',namePlaceholder:'Например, TiviMate',
+  descriptionLabel:'Описание',descriptionPlaceholder:'Для чего эта программа',
+  save:'Сохранить',cancel:'Отмена',edit:'Изменить',empty:'Пока нет сохранённых кодов.',
+  go:'Открыть',delete:'Удалить',foot1:'Без рекламных блоков на этой странице. Сторонние сайты могут показывать собственную рекламу.',
+  foot2:'Коды сохраняются только в этом браузере. TWO4APP не связан с AFTVnews.',
+  enterFirst:'Сначала введите код.',savedOk:'Изменения сохранены.',autoSaved:'Код автоматически сохранён.',
+  removed:'Код удалён.',notSaved:'Этот браузер не разрешает локальное сохранение.',
+  exampleName:'Код ',limit:'Не более 60 сохранённых кодов.',editMode:'Введите название и описание кода.'
+ },
+ de:{
+  home:'TWO4APP Website',title:'Download per Code',enterCode:'Zahlencode eingeben',codeLabel:'AFTVnews-Zahlencode',
+  clear:'Löschen',openDownload:'Download öffnen',saved:'Meine Codes',codeForSave:'Code:',editTitle:'Code bearbeiten',
+  nameLabel:'App-Name',namePlaceholder:'Zum Beispiel TiviMate',
+  descriptionLabel:'Beschreibung',descriptionPlaceholder:'Wofür ist diese App?',
+  save:'Speichern',cancel:'Abbrechen',edit:'Bearbeiten',empty:'Noch keine gespeicherten Codes.',
+  go:'Öffnen',delete:'Entfernen',foot1:'Keine Werbeblöcke auf dieser Seite. Externe Websites können eigene Werbung anzeigen.',
+  foot2:'Codes werden nur in diesem Browser gespeichert. TWO4APP ist nicht mit AFTVnews verbunden.',
+  enterFirst:'Bitte zuerst einen Code eingeben.',savedOk:'Änderungen gespeichert.',autoSaved:'Code automatisch gespeichert.',
+  removed:'Code entfernt.',notSaved:'Dieser Browser lässt kein lokales Speichern zu.',
+  exampleName:'Code ',limit:'Maximal 60 gespeicherte Codes.',editMode:'App-Name und Beschreibung eingeben.'
+ }
 };
-var byId=function(id){return document.getElementById(id)};
-var input=byId('code'),name=byId('name'),description=byId('description'),open=byId('open'),preview=byId('preview'),bookmarks=byId('bookmarks');
-var savedKey='two4app-codes-favorites-v1',langKey='two4app-codes-language-v1',editingCode=null;
+function byId(id){return document.getElementById(id)}
+var input=byId('code'),name=byId('name'),description=byId('description'),open=byId('open');
+var preview=byId('preview'),bookmarks=byId('bookmarks'),editPanel=byId('editPanel'),saveStatus=byId('saveStatus');
+var editingCode=null,autoTimer=null,language='ru',favorites=[];
 function getStored(key){try{return localStorage.getItem(key)}catch(e){return null}}
 function setStored(key,value){try{localStorage.setItem(key,value);return true}catch(e){return false}}
-var language=getStored(langKey)==='de'?'de':'ru',favorites=[];
+language=getStored(LANGUAGE_KEY)==='de'?'de':'ru';
 try{
- var candidate=JSON.parse(getStored(savedKey)||'[]');
+ var candidate=JSON.parse(getStored(STORAGE_KEY)||'[]');
  if(Array.isArray(candidate)){
-  favorites=candidate.filter(function(x){return x&&typeof x.code==='string'&&/^\d{1,15}$/.test(x.code)&&typeof x.name==='string'})
-   .slice(0,60).map(function(x){return{code:x.code,name:x.name.slice(0,80),description:typeof x.description==='string'?x.description.slice(0,300):''}});
+  var used={};
+  favorites=candidate.filter(function(x){
+   if(!x||typeof x.code!=='string'||!(/^\d{1,15}$/).test(x.code)||typeof x.name!=='string'||used[x.code])return false;
+   used[x.code]=true;return true;
+  }).slice(0,MAX_ENTRIES).map(function(x){
+   return{code:x.code,name:x.name.slice(0,80),description:typeof x.description==='string'?x.description.slice(0,300):''};
+  });
  }
 }catch(e){}
-function t(k){return dict[language][k]||k}
-function normalized(text){var match=String(text||'').match(/(?:aftv\.news|go\.aftvnews\.com)\/(\d{1,15})/i);return(match?match[1]:String(text||'').replace(/\D/g,'')).slice(0,15)}
+function t(key){return dict[language][key]||key}
+function normalized(value){
+ var s=String(value||'');
+ var match=s.match(/(?:aftv\.news|go\.aftvnews\.com)\/(\d{1,15})/i);
+ return (match?match[1]:s.replace(/\D/g,'')).slice(0,15);
+}
 function current(){return normalized(input.value)}
 function link(code){return 'https://aftv.news/'+encodeURIComponent(code)}
-function setCode(value){input.value=normalized(value);update()}
+function status(message){saveStatus.textContent=message}
+function persist(){return setStored(STORAGE_KEY,JSON.stringify(favorites))}
+function ensureSaved(code){
+ if(!code||!(/^\d{1,15}$/).test(code)||editingCode)return false;
+ if(favorites.some(function(x){return x.code===code}))return false;
+ if(favorites.length>=MAX_ENTRIES){status(t('limit'));return false}
+ var entry={code:code,name:t('exampleName')+code,description:''};
+ favorites.unshift(entry);
+ if(!persist()){favorites.shift();status(t('notSaved'));return false}
+ render();status(t('autoSaved'));return true;
+}
+function stopAuto(){if(autoTimer!==null){clearTimeout(autoTimer);autoTimer=null}}
+function scheduleAuto(){
+ stopAuto();
+ var captured=current();
+ if(editingCode||captured.length<MIN_AUTO_LENGTH||favorites.some(function(x){return x.code===captured}))return;
+ autoTimer=setTimeout(function(){autoTimer=null;if(current()===captured)ensureSaved(captured)},AUTO_DELAY);
+}
+function setCode(value,autosave){
+ input.value=normalized(value);update();
+ if(autosave)scheduleAuto();else stopAuto();
+}
 function update(){
  var code=current();if(input.value!==code)input.value=code;
  open.href=code?link(code):'#';open.setAttribute('aria-disabled',code?'false':'true');open.tabIndex=code?0:-1;
  preview.textContent='aftv.news/'+(code||'…');
- byId('save').disabled=!code;byId('selectedSaveCode').textContent=code||'—';
 }
-function status(id,message){byId(id).textContent=message}
-function updateEditor(){byId('save').textContent=editingCode?t('update'):t('save');byId('cancelEdit').hidden=!editingCode}
-function cancelEditing(){editingCode=null;name.value='';description.value='';updateEditor();status('saveStatus','')}
-function applyLang(lang){
- language=lang;setStored(langKey,lang);document.documentElement.lang=lang;
- document.querySelectorAll('[data-i18n]').forEach(function(el){el.textContent=t(el.dataset.i18n)});
- document.querySelectorAll('[data-placeholder]').forEach(function(el){el.placeholder=t(el.dataset.placeholder)});
- byId('ruBtn').setAttribute('aria-pressed',String(lang==='ru'));byId('deBtn').setAttribute('aria-pressed',String(lang==='de'));
- updateEditor();render();status('status','');status('saveStatus','');
+function edit(code){
+ stopAuto();
+ var entry=favorites.find(function(x){return x.code===code});
+ if(!entry)return;
+ editingCode=code;name.value=entry.name;description.value=entry.description||'';
+ byId('selectedSaveCode').textContent=code;editPanel.hidden=false;
+ status(t('editMode'));name.focus();
 }
-function persist(){return setStored(savedKey,JSON.stringify(favorites))}
+function closeEdit(){
+ editingCode=null;name.value='';description.value='';editPanel.hidden=true;
+ byId('selectedSaveCode').textContent='—';status('');
+}
 function render(){
  bookmarks.replaceChildren();
- if(!favorites.length){var empty=document.createElement('p');empty.className='empty';empty.textContent=t('empty');bookmarks.appendChild(empty);return}
+ if(!favorites.length){
+  var empty=document.createElement('p');empty.className='empty';empty.textContent=t('empty');bookmarks.appendChild(empty);return;
+ }
  favorites.forEach(function(entry){
   var card=document.createElement('div');card.className='bookmark';
   var detail=document.createElement('div');detail.className='bookmark-detail';
   var title=document.createElement('strong');title.textContent=entry.name;detail.appendChild(title);
-  if(entry.description){var note=document.createElement('p');note.className='bookmark-desc';note.textContent=entry.description;detail.appendChild(note)}
+  if(entry.description){var desc=document.createElement('p');desc.className='bookmark-desc';desc.textContent=entry.description;detail.appendChild(desc)}
   var code=document.createElement('small');code.textContent=t('codeForSave')+' '+entry.code;detail.appendChild(code);
   var actions=document.createElement('div');actions.className='bookmark-actions';
   var btn=document.createElement('a');btn.className='bookmark-open';btn.textContent=t('go');btn.href=link(entry.code);
-  var edit=document.createElement('button');edit.type='button';edit.className='bookmark-edit';edit.textContent=t('edit');
-  edit.addEventListener('click',function(){editingCode=entry.code;setCode(entry.code);name.value=entry.name;description.value=entry.description||'';updateEditor();status('saveStatus',t('editMode'));name.focus()});
-  var del=document.createElement('button');del.type='button';del.className='bookmark-del';del.textContent='×';del.setAttribute('aria-label',t('delete')+' '+entry.name);
+  var pencil=document.createElement('button');pencil.type='button';pencil.className='bookmark-edit';
+  pencil.textContent='✎';pencil.title=t('edit');pencil.setAttribute('aria-label',t('edit')+' '+entry.name);
+  pencil.addEventListener('click',function(){edit(entry.code)});
+  var del=document.createElement('button');del.type='button';del.className='bookmark-del';
+  del.textContent='×';del.title=t('delete');del.setAttribute('aria-label',t('delete')+' '+entry.name);
   del.addEventListener('click',function(){
    var before=favorites.slice();favorites=favorites.filter(function(x){return x.code!==entry.code});
-   if(!persist()){favorites=before;status('saveStatus',t('notSaved'));return}
-   if(editingCode===entry.code)cancelEditing();render();status('saveStatus',t('removed'));
+   if(!persist()){favorites=before;status(t('notSaved'));return}
+   if(editingCode===entry.code)closeEdit();
+   render();status(t('removed'));
   });
-  actions.appendChild(btn);actions.appendChild(edit);actions.appendChild(del);
+  actions.appendChild(btn);actions.appendChild(pencil);actions.appendChild(del);
   card.appendChild(detail);card.appendChild(actions);bookmarks.appendChild(card);
  });
 }
-input.addEventListener('input',function(){update();status('status','')});
-input.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();if(current())open.click();else status('status',t('enterFirst'))}});
-byId('keypad').addEventListener('click',function(ev){var b=ev.target.closest('button[data-digit]');if(b){setCode(current()+b.dataset.digit);status('status','')}});
-byId('erase').addEventListener('click',function(){setCode(current().slice(0,-1))});
-byId('clear').addEventListener('click',function(){setCode('');status('status','');input.focus()});
-open.addEventListener('click',function(ev){if(!current()){ev.preventDefault();status('status',t('enterFirst'))}});
-byId('save').addEventListener('click',function(){
- var code=current();if(!code){status('saveStatus',t('enterFirst'));return}
- var named=name.value.trim().slice(0,80)||t('exampleName')+code;
- var desc=description.value.trim().slice(0,300);
- var snapshot=favorites.map(function(e){return{code:e.code,name:e.name,description:e.description||''}});
- var existing=favorites.find(function(x){return x.code===code});
- if(editingCode){
-  var original=favorites.find(function(x){return x.code===editingCode});
-  if(!original){cancelEditing();status('saveStatus',t('removed'));return}
-  if(code!==editingCode&&existing){status('saveStatus',t('duplicate'));return}
-  original.code=code;original.name=named;original.description=desc;
- }else if(existing){existing.name=named;existing.description=desc}
- else{if(favorites.length>=60){status('saveStatus',t('limit'));return}favorites.unshift({code:code,name:named,description:desc})}
- if(!persist()){favorites=snapshot;render();status('saveStatus',t('notSaved'));return}
- var wasUpdate=Boolean(editingCode||existing);
- cancelEditing();render();status('saveStatus',t(wasUpdate?'savedUpdate':'savedOk'));
+function applyLang(lang){
+ language=lang;setStored(LANGUAGE_KEY,lang);document.documentElement.lang=lang;
+ document.querySelectorAll('[data-i18n]').forEach(function(el){el.textContent=t(el.dataset.i18n)});
+ document.querySelectorAll('[data-placeholder]').forEach(function(el){el.placeholder=t(el.dataset.placeholder)});
+ byId('ruBtn').setAttribute('aria-pressed',String(lang==='ru'));
+ byId('deBtn').setAttribute('aria-pressed',String(lang==='de'));
+ render();
+}
+input.addEventListener('input',function(){update();scheduleAuto()});
+input.addEventListener('keydown',function(ev){
+ if(ev.key==='Enter'){
+  ev.preventDefault();
+  if(current())open.click();
+  else byId('status').textContent=t('enterFirst');
+ }
 });
-byId('cancelEdit').addEventListener('click',cancelEditing);
+byId('keypad').addEventListener('click',function(ev){
+ var b=ev.target.closest('button[data-digit]');
+ if(b)setCode(current()+b.dataset.digit,true);
+});
+byId('erase').addEventListener('click',function(){setCode(current().slice(0,-1),false)});
+byId('clear').addEventListener('click',function(){setCode('',false);byId('status').textContent='';input.focus()});
+open.addEventListener('click',function(ev){
+ var code=current();
+ if(!code){ev.preventDefault();byId('status').textContent=t('enterFirst');return}
+ stopAuto();ensureSaved(code);
+});
+byId('save').addEventListener('click',function(){
+ if(!editingCode)return;
+ var item=favorites.find(function(x){return x.code===editingCode});
+ if(!item){closeEdit();render();return}
+ var prev={name:item.name,description:item.description};
+ item.name=name.value.trim().slice(0,80)||t('exampleName')+item.code;
+ item.description=description.value.trim().slice(0,300);
+ if(!persist()){item.name=prev.name;item.description=prev.description;status(t('notSaved'));return}
+ closeEdit();render();status(t('savedOk'));
+});
+byId('cancelEdit').addEventListener('click',closeEdit);
 byId('ruBtn').addEventListener('click',function(){applyLang('ru')});
 byId('deBtn').addEventListener('click',function(){applyLang('de')});
 document.addEventListener('keydown',function(ev){
  var el=document.activeElement;
  if(el===input||el===name||el===description||ev.altKey||ev.ctrlKey||ev.metaKey)return;
- if(/^\d$/.test(ev.key)){ev.preventDefault();setCode(current()+ev.key);return}
- if(ev.key==='Backspace'){ev.preventDefault();setCode(current().slice(0,-1));return}
+ if(/^\d$/.test(ev.key)){ev.preventDefault();setCode(current()+ev.key,true);return}
+ if(ev.key==='Backspace'){ev.preventDefault();setCode(current().slice(0,-1),false);return}
  if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(ev.key))return;
- var list=Array.from(document.querySelectorAll('a[href],button:not(:disabled),input:not(:disabled),textarea:not(:disabled)')).filter(function(node){var r=node.getBoundingClientRect();return r.width>0&&r.height>0&&node.tabIndex!==-1});
+ var list=Array.from(document.querySelectorAll('a[href],button:not(:disabled),input:not(:disabled),textarea:not(:disabled)')).filter(function(node){
+  var r=node.getBoundingClientRect();return r.width>0&&r.height>0&&node.tabIndex!==-1;
+ });
  if(!list.includes(el))return;
  var origin=el.getBoundingClientRect(),ox=origin.left+origin.width/2,oy=origin.top+origin.height/2,best=null,bestScore=Infinity;
- list.forEach(function(node){if(node===el)return;var r=node.getBoundingClientRect(),dx=r.left+r.width/2-ox,dy=r.top+r.height/2-oy;
+ list.forEach(function(node){
+  if(node===el)return;
+  var r=node.getBoundingClientRect(),dx=r.left+r.width/2-ox,dy=r.top+r.height/2-oy;
   var along=ev.key==='ArrowRight'?dx:ev.key==='ArrowLeft'?-dx:ev.key==='ArrowDown'?dy:-dy;
   var aside=ev.key==='ArrowRight'||ev.key==='ArrowLeft'?Math.abs(dy):Math.abs(dx);
   if(along<7)return;var score=along+aside*2.8;if(score<bestScore){best=node;bestScore=score}
  });
  if(best){ev.preventDefault();best.focus({preventScroll:false})}
 });
-var q=new URLSearchParams(window.location.search).get('code');
-if(q)setCode(q);else update();applyLang(language);
+var param=new URLSearchParams(window.location.search).get('code');
+if(param)setCode(param,true);else update();
+applyLang(language);
 })();
+
 </script>
 </body>
 </html>
