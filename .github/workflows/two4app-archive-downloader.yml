@@ -1,0 +1,27 @@
+name: Archive original TWO4APP Downloader 1.1 APK
+on:
+  push:
+    branches: [two4app-release-storage-migration]
+    paths: ['.github/workflows/two4app-archive-downloader.yml']
+permissions:
+  contents: write
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Publish existing public website APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmp downloader.apk downloader-tv-1.1.apk
+          build_tools="$ANDROID_HOME/build-tools/35.0.0"
+          if [[ ! -x "$build_tools/apksigner" ]]; then
+            sdkmanager "build-tools;35.0.0"
+          fi
+          python3 .github/two4app/release_storage.py --registry .github/two4app/protected-versions.json publish --historical --repo "$GITHUB_REPOSITORY" --version 1.1 --version-code 2 --commit 40fb1ccdd061afbb1ec257cef266a511efdba309 --tag downloader-1.1-test --app 'TWO4APP Downloader' --package de.two4app.downloader --asset-name downloader-tv-1.1.apk --apk downloader-tv-1.1.apk --build-tools "$build_tools" --expected-sha256 e909f430f110e0f70fc2e1aef220a5c21fe3cafc3c715146413f2a6eadcbddde --notes 'Original signed APK already available on the public TWO4APP website. Prior signature verification: https://github.com/bald2012-lab/TWO4APP-Website/actions/runs/42331673220.'
