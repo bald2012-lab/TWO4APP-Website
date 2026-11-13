@@ -41,7 +41,15 @@ def api(endpoint, *args):
 
 
 def pages(endpoint):
-    return [item for page in api(endpoint, "--paginate", "--slurp") for item in page]
+    remaining = gh("api", endpoint, "--paginate").lstrip()
+    decoder = json.JSONDecoder()
+    result = []
+    while remaining:
+        page, end = decoder.raw_decode(remaining)
+        require(isinstance(page, list), "Expected a paginated GitHub array")
+        result.extend(page)
+        remaining = remaining[end:].lstrip()
+    return result
 
 
 def git_tag_commit(repo, tag):
@@ -207,6 +215,9 @@ def publish(args):
                            (APK, args.asset_name), (r"[a-zA-Z0-9_.]+", args.package)):
         require(matches(pattern, value), f"Invalid release input: {value}")
     require(args.version_code > 0, "Invalid versionCode")
+    if args.repo.lower() == "bald2012-lab/arvidik" and args.category == "TEST":
+        require(args.tag == f"{args.version}-arvidik-test" and args.asset_name == f"{args.tag}.apk",
+                "Incorrect ARVIDIK TEST asset or tag name")
     require(not args.historical or args.expected_sha256, "Historical APK must have a known digest")
     require(not args.expected_sha256 or matches(DIGEST, args.expected_sha256), "Invalid expected digest")
     verify_apk(args.apk, args.version, args.version_code, args.package, args.build_tools)
