@@ -1,22 +1,4 @@
 {
   "schema_version": 1,
-  "protected_versions": [
-    {
-      "app": "ARVIDIK",
-      "repository": "bald2012-lab/ARVIDIK",
-      "version": "0.1.14",
-      "category": "TEST",
-      "protected": true,
-      "reason": "Эксперимент с двумя независимыми движками Media3 ExoPlayer 1.11.1 и ExoPlayer 2.11.7, переключателем и раздельными настройками.",
-      "tag": "0.1.14-arvidik-test",
-      "commit_sha": "954162c1f280e88aa037ec73950653b122a29e6d",
-      "branch": "arvidik-0.1.14-exo2-recovery",
-      "apk_sha256": "84d97b24ae71e9069303e89772331498062b1ccccfaa5e6d1ace05319e13499b",
-      "asset_name": "0.1.14-arvidik-test.apk",
-      "release_url": "https://github.com/bald2012-lab/ARVIDIK/releases/tag/0.1.14-arvidik-test",
-      "source_run_url": "https://github.com/bald2012-lab/ARVIDIK/actions/runs/43115937334",
-      "source_artifact_ids": [13897669683],
-      "protected_on": "2026-11-13"
-    }
-  ]
+  "protected_versions": []
 }
