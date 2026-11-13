@@ -1,0 +1,209 @@
+name: TWO4APP storage cleanup
+on:
+  push:
+    branches: [two4app-storage-cleanup-2026-11-13]
+    paths: ['.github/workflows/two4app-storage-cleanup.yml']
+permissions:
+  actions: write
+  contents: write
+concurrency:
+  group: two4app-storage-cleanup
+  cancel-in-progress: false
+jobs:
+  cleanup:
+    if: github.repository == 'bald2012-lab/TWO4APP-Website'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Delete listed files and verify storage
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLEANUP_SPEC: >-
+            {"repo":"bald2012-lab/TWO4APP-Website","protected_artifacts":[14034146156,14033039312,13519922304],"protected_tags":{"downloader-1.1-test":"40fb1ccdd061afbb1ec257cef266a511efdba309"},"artifacts":{"13557976032":[31420,"sha256:487a6a6713f2462c8762d66e163e6a2558e4179d515370b9380da5bdb1cd2a5a",42331605649],"13557935619":[31422,"sha256:1452fa491349187852c4959f23de9b6fb010d9ae8623819654489f577f99481d",42331386445],"13519883022":[25635,"sha256:b229c2e0c12c49e0bb7affd65de59d2403ff96c675193bfb054bd28b114199b1",42251725301],"13520587155":[25636,"sha256:e2fa14cddf0f237c42ac07b1e393404f39811efe3b35dc5ea18289090de822e6",42251650863],"13520686544":[25629,"sha256:0d252bd1445c68ddc82afd16b7dc67b1e236260ad1156fe6ce91f1a04fdc894f",42251314141],"13520466521":[25636,"sha256:f4b567819a99343464e2890c46b2cbde56882e69d64e7fc61538456b3e4c8c2f",42250944182],"13520716138":[25635,"sha256:1845c5bb5b4c358edd0b3da212e357a9ad6e0ea2c8e299777dabdbc3c72640f0",42250913678],"13521005930":[25295,"sha256:023b5746f6e2744ca8c8f8943e987d7e6045f725990a93495083f2ac33e453bd",42250882805],"13520156274":[24665,"sha256:72bb4eea84f505f81254316ecc085a38504162f42c6a2e791ff8b37557c30d06",42250422150]},"assets":{},"keep":{"743431245":["downloader-1.1-test","downloader-tv-1.1.apk",33023,"sha256:e909f430f110e0f70fc2e1aef220a5c21fe3cafc3c715146413f2a6eadcbddde"]},"obsolete_cache_refs":["refs/heads/downloader-1.0"],"migrate":{"id":13519883022,"digest":"sha256:b229c2e0c12c49e0bb7affd65de59d2403ff96c675193bfb054bd28b114199b1","sha":"4f81d7ec0dfb6b8fb0aadd6f04849cfc3c12882b","apk_sha":"b81ac58fc300f18ba43fbfd111daac0ef745a3f97bcf96939651f455ca710cd1","run":42251725301}}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import io
+          import subprocess
+          import tempfile
+          import zipfile
+          import datetime as dt
+          import json
+          import os
+          import sys
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          
+          repo = os.environ["GITHUB_REPOSITORY"]
+          spec = json.loads(os.environ["CLEANUP_SPEC"])
+          assert repo == spec["repo"]
+          root = f"https://api.github.com/repos/{repo}/"
+          headers = {
+              "Authorization": "Bearer " + os.environ["GH_TOKEN"],
+              "Accept": "application/vnd.github+json",
+              "X-GitHub-Api-Version": "2022-11-28",
+              "User-Agent": "TWO4APP-storage-maintenance",
+          }
+          
+          def request(path, method="GET"):
+              req = urllib.request.Request(root + path, method=method, headers=headers)
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  return json.load(response) if method == "GET" else response.status
+          
+          def pages(path, key=None):
+              page = 1
+              while True:
+                  sep = "&" if "?" in path else "?"
+                  result = request(f"{path}{sep}per_page=100&page={page}")
+                  entries = result[key] if key else result
+                  yield from entries
+                  if len(entries) < 100:
+                      return
+                  page += 1
+          
+          def artifacts():
+              return {x["id"]: x for x in pages("actions/artifacts", "artifacts") if not x["expired"]}
+          
+          def releases():
+              rows = list(pages("releases"))
+              assets = {
+                  a["id"]: (r, a)
+                  for r in rows
+                  for a in pages(f"releases/{r['id']}/assets")
+              }
+              return rows, assets
+          
+          def caches():
+              return {x["id"]: x for x in pages("actions/caches", "actions_caches")}
+          
+          def bytes_of(values, field):
+              return sum(x[field] for x in values)
+          
+          def report(label, value):
+              print(label + " " + json.dumps(value, ensure_ascii=False, separators=(",", ":")), flush=True)
+          
+          def matches_artifact(row, expected):
+              return (row["size_in_bytes"], row.get("digest"), row["workflow_run"]["id"]) == tuple(expected)
+          
+          def matches_asset(pair, expected):
+              release, asset = pair
+              return (release["tag_name"], asset["name"], asset["size"], asset.get("digest")) == tuple(expected)
+          
+          before_art = artifacts()
+          before_rel, before_assets = releases()
+          before_cache = caches()
+          report("BEFORE", {
+              "actions_count": len(before_art),
+              "actions_bytes": bytes_of(before_art.values(), "size_in_bytes"),
+              "releases_count": len(before_assets),
+              "releases_bytes": bytes_of((p[1] for p in before_assets.values()), "size"),
+              "caches_count": len(before_cache),
+              "caches_bytes": bytes_of(before_cache.values(), "size_in_bytes"),
+          })
+          delete_art = {int(k): v for k, v in spec["artifacts"].items()}
+          delete_assets = {int(k): v for k, v in spec["assets"].items()}
+          keep = {int(k): v for k, v in spec["keep"].items()}
+          protected_artifacts = set(spec["protected_artifacts"])
+          assert not (protected_artifacts & delete_art.keys() or keep.keys() & delete_assets.keys())
+          for ident, expected in keep.items():
+              pair = before_assets[ident]
+              assert matches_asset(pair, expected) and not pair[0]["draft"] and pair[1]["state"] == "uploaded", ident
+          for tag, sha in spec.get("protected_tags", {}).items():
+              ref = request("git/ref/tags/" + urllib.parse.quote(tag, safe=""))
+              assert ref["object"]["type"] == "commit" and ref["object"]["sha"] == sha, tag
+          for ident, expected in delete_art.items():
+              assert matches_artifact(before_art[ident], expected), ident
+          for ident, expected in delete_assets.items():
+              pair = before_assets[ident]
+              assert matches_asset(pair, expected) and not pair[0]["immutable"] and pair[1]["name"].lower().endswith((".apk", ".aab")), ident
+              assert not any("PROTECTED" in str(field or "").upper() for field in (pair[1].get("label"), pair[0].get("name"))), ident
+          
+          obsolete_cache_refs = set(spec.get("obsolete_cache_refs", []))
+          def obsolete_cache(row):
+              ref = row["ref"]
+              if ref in obsolete_cache_refs:
+                  return True
+              if not ref.startswith("refs/pull/"):
+                  return False
+              return False
+          delete_cache = {ident: row for ident, row in before_cache.items() if obsolete_cache(row)}
+          report("CACHE_REFS", {ref: [sum(r["size_in_bytes"] for r in before_cache.values() if r["ref"] == ref), max(r["last_accessed_at"] for r in before_cache.values() if r["ref"] == ref)] for ref in sorted({r["ref"] for r in before_cache.values()})})
+          migration = spec["migrate"]
+          assert matches_artifact(before_art[migration["id"]], spec["artifacts"][str(migration["id"])])
+          assert before_art[migration["id"]]["workflow_run"]["head_sha"] == migration["sha"]
+          with tempfile.TemporaryDirectory() as directory:
+              token_env = os.environ.copy()
+              endpoint = f"repos/{repo}/actions/artifacts/{migration['id']}/zip"
+              archive = subprocess.check_output(["gh", "api", endpoint], env=token_env)
+              assert "sha256:" + hashlib.sha256(archive).hexdigest() == migration["digest"]
+              with zipfile.ZipFile(io.BytesIO(archive)) as zipped:
+                  assert zipped.namelist() == ["app-debug.apk"]
+                  apk = zipped.read("app-debug.apk")
+              assert hashlib.sha256(apk).hexdigest() == migration["apk_sha"]
+              tag = "downloader-1.0-test"
+              asset_name = "downloader-tv-1.0-test.apk"
+              path = os.path.join(directory, asset_name)
+              with open(path, "wb") as file:
+                  file.write(apk)
+              notes = ("Original verified Downloader 1.0 debug-signed test APK. "
+                       "Source: " + migration["sha"] + ". CI: https://github.com/" + repo
+                       + "/actions/runs/" + str(migration["run"]) + ". SHA-256: " + migration["apk_sha"] + ".")
+              subprocess.run(["gh", "release", "create", tag, path, "--repo", repo,
+                              "--target", migration["sha"], "--title", "TWO4APP Downloader 1.0 — TEST",
+                              "--notes", notes, "--prerelease"], check=True, env=token_env)
+              published = request("releases/tags/" + tag)
+              published_asset = next(a for a in published["assets"] if a["name"] == asset_name)
+              assert not published["draft"] and published_asset["digest"] == "sha256:" + migration["apk_sha"]
+              verify_dir = os.path.join(directory, "verify")
+              subprocess.run(["gh", "release", "download", tag, "--repo", repo, "--pattern", asset_name,
+                              "--dir", verify_dir], check=True, env=token_env)
+              with open(os.path.join(verify_dir, asset_name), "rb") as file:
+                  assert hashlib.sha256(file.read()).hexdigest() == migration["apk_sha"]
+              keep[published_asset["id"]] = [tag, asset_name, published_asset["size"], published_asset["digest"]]
+              report("PUBLISHED", {"version": "1.0", "bytes": published_asset["size"], "id": published_asset["id"]})
+          
+          errors = []
+          done = {"artifacts": [], "assets": [], "caches": []}
+          targets = [
+              ("artifacts", "actions/artifacts/", {k: before_art[k]["size_in_bytes"] for k in delete_art}),
+              ("assets", "releases/assets/", {k: before_assets[k][1]["size"] for k in delete_assets}),
+              ("caches", "actions/caches/", {k: row["size_in_bytes"] for k, row in delete_cache.items()}),
+          ]
+          for kind, path, entries in targets:
+              for ident, size in entries.items():
+                  try:
+                      assert request(path + str(ident), "DELETE") == 204
+                      done[kind].append((ident, size))
+                  except (urllib.error.URLError, AssertionError) as error:
+                      errors.append([kind, ident, str(error)])
+                      report("DELETE_ERROR", errors[-1])
+          
+          after_art = artifacts()
+          after_rel, after_assets = releases()
+          after_cache = caches()
+          remaining = {
+              "artifacts": sorted(set(delete_art) & after_art.keys()),
+              "assets": sorted(set(delete_assets) & after_assets.keys()),
+              "caches": sorted(set(delete_cache) & after_cache.keys()),
+          }
+          release_signature = lambda rows: {x["id"]: (x["tag_name"], x["name"], x["body"]) for x in rows}
+          preserved = all(i in after_assets and matches_asset(after_assets[i], v) for i, v in keep.items())
+          preserved = preserved and protected_artifacts <= after_art.keys()
+          preserved = preserved and release_signature(before_rel) == {i: v for i, v in release_signature(after_rel).items() if i in release_signature(before_rel)}
+          report("DELETED", {kind: {"count": len(rows), "bytes": sum(size for _, size in rows), "ids": [i for i, _ in rows]} for kind, rows in done.items()})
+          report("AFTER", {
+              "actions_count": len(after_art),
+              "actions_bytes": bytes_of(after_art.values(), "size_in_bytes"),
+              "releases_count": len(after_assets),
+              "releases_bytes": bytes_of((p[1] for p in after_assets.values()), "size"),
+              "caches_count": len(after_cache),
+              "caches_bytes": bytes_of(after_cache.values(), "size_in_bytes"),
+              "target_ids_still_present": remaining,
+              "protected_assets_and_release_notes_verified": preserved,
+              "delete_errors": errors,
+          })
+          if errors or any(remaining.values()) or not preserved:
+              sys.exit(1)
+          PY
